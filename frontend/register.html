@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        /* Basic reset and styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #e3f2fd; /* Light blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #register-container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 1;
+        }
+
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            border: 1px solid #b0bec5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #00796b;
+            outline: none;
+        }
+
+        button {
+            background: #00796b;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #004d40;
+        }
+
+        p {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        a {
+            color: #00796b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animation styles */
+        #brand-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 0;
+        }
+
+        #brand-name {
+            font-size: 2em;
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        #person-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .person-icon {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0;
+            animation: moveToCenter 2s forwards;
+        }
+
+        @keyframes moveToCenter {
+            from {
+                transform: translate(
+                    calc(var(--offset-x) * 100vw),
+                    calc(var(--offset-y) * 100vh)
+                );
+                opacity: 0;
+            }
+            to {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+        }
+
+        /* Define custom offsets for each icon */
+        .person-icon:nth-child(1) { --offset-x: -1; --offset-y: -1; color: #795548; }
+        .person-icon:nth-child(2) { --offset-x: 1; --offset-y: -1; color: #FFD54F; }
+        .person-icon:nth-child(3) { --offset-x: -1; --offset-y: 1; color: #6D4C41; }
+        .person-icon:nth-child(4) { --offset-x: 1; --offset-y: 1; color: #FFEB3B; }
+        .person-icon:nth-child(5) { --offset-x: 0; --offset-y: -1; color: #F57C00; }
+        .person-icon:nth-child(6) { --offset-x: -1; --offset-y: 0; color: #FF5722; }
+        .person-icon:nth-child(7) { --offset-x: 1; --offset-y: 0; color: #FF9800; }
+        .person-icon:nth-child(8) { --offset-x: 0; --offset-y: 1; color: #FF5722; }
+        .person-icon:nth-child(9) { --offset-x: 0; --offset-y: 0; color: #FFC107; }
+        .person-icon:nth-child(10) { --offset-x: -0.5; --offset-y: -0.5; color: #8D6E63; }
+        .person-icon:nth-child(11) { --offset-x: 0.5; --offset-y: -0.5; color: #E91E63; }
+        .person-icon:nth-child(12) { --offset-x: -0.5; --offset-y: 0.5; color: #9C27B0; }
+        .person-icon:nth-child(13) { --offset-x: 0.5; --offset-y: 0.5; color: #3F51B5; }
+        .person-icon:nth-child(14) { --offset-x: -0.5; --offset-y: 1; color: #00BCD4; }
+        .person-icon:nth-child(15) { --offset-x: 0.5; --offset-y: 1; color: #4CAF50; }
+        .person-icon:nth-child(16) { --offset-x: -1; --offset-y: -0.5; color: #8BC34A; }
+        .person-icon:nth-child(17) { --offset-x: 1; --offset-y: -0.5; color: #CDDC39; }
+        .person-icon:nth-child(18) { --offset-x: -1; --offset-y: 0.5; color: #009688; }
+        .person-icon:nth-child(19) { --offset-x: 1; --offset-y: 0.5; color: #607D8B; }
+        .person-icon:nth-child(20) { --offset-x: 0; --offset-y: 1; color: #FF5722; }
+
+        #otp-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="brand-container">
+        <div id="brand-name">Splannes</div>
+        <div id="person-icons">
+            <span class="person-icon">🧑</span> <!-- Adult male -->
+            <span class="person-icon">👩</span> <!-- Adult female -->
+            <span class="person-icon">🧑🏽</span> <!-- Adult male with medium skin tone -->
+            <span class="person-icon">👩🏿</span> <!-- Adult female with dark skin tone -->
+            <span class="person-icon">🧑🏻</span> <!-- Adult male with light skin tone -->
+            <span class="person-icon">👩🏼</span> <!-- Adult female with medium-light skin tone -->
+            <span class="person-icon">🧑🏾</span> <!-- Adult male with medium-dark skin tone -->
+            <span class="person-icon">👩🏽</span> <!-- Adult female with medium skin tone -->
+            <span class="person-icon">🧑🏿</span> <!-- Adult male with dark skin tone -->
+            <span class="person-icon">👩🏿</span> <!-- Adult female with dark skin tone -->
+            <span class="person-icon">🧑🏻</span> <!-- Adult male with light skin tone -->
+            <span class="person-icon">👩🏻</span> <!-- Adult female with light skin tone -->
+            <span class="person-icon">🧑🏼</span> <!-- Adult male with medium-light skin tone -->
+            <span class="person-icon">👩🏼</span> <!-- Adult female with medium-light skin tone -->
+            <span class="person-icon">🧑🏽</span> <!-- Adult male with medium skin tone -->
+            <span class="person-icon">👩🏽</span> <!-- Adult female with medium skin tone -->
+            <span class="person-icon">🧑🏾</span> <!-- Adult male with medium-dark skin tone -->
+            <span class="person-icon">👩🏾</span> <!-- Adult female with medium-dark skin tone -->
+           
+            <span class="person-icon">👩🏾</span> <!-- Adult female with medium-dark skin tone -->
+            <span class="person-icon">🧑🏿</span> <!-- Adult male with dark skin tone -->
+            <span class="person-icon">👩🏿</span> <!-- Adult female with dark skin tone -->
+        </div>
+    </div>
+    <div id="register-container">
+        <h2>Register</h2>
+        <form id="register-form" enctype="multipart/form-data">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="photo">Profile Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+            <button type="submit">Register</button>
+        </form>
+        <div id="otp-container">
+            <h2>Verify OTP</h2>
+            <form id="otp-form">
+                <label for="otp">OTP:</label>
+                <input type="text" id="otp" name="otp" required>
+                <button type="submit">Verify OTP</button>
+            </form>
+        </div>
+        <p>Already have an account? <a href="index.html">Login here</a></p>
+    </div>
+    <script>
+        window.onload = function() {
+            const icons = document.querySelectorAll('.person-icon');
+            const container = document.getElementById('register-container');
+            const brandContainer = document.getElementById('brand-container');
+
+            // Set initial positions for the icons
+            icons.forEach((icon, index) => {
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 1000;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+
+                icon.style.transform = `translate(${x}px, ${y}px)`;
+                icon.style.opacity = 0;
+                icon.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Animate person icons to the center
+            setTimeout(() => {
+                icons.forEach((icon) => {
+                    icon.style.transform = 'translate(0, 0)';
+                    icon.style.opacity = 1;
+                });
+
+                // After icons converge, hide the emojis and display the registration form
+                setTimeout(() => {
+                    icons.forEach((icon) => {
+                        icon.style.opacity = 0;
+                    });
+                    brandContainer.style.opacity = 1;
+                    container.style.opacity = 1;
+                }, 5000); // Adjust timing to 5 seconds
+            }, 100); // Initial delay
+        };
+    </script>
+</body>
+</html>

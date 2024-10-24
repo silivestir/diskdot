@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splannes Homepage</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Basic reset and styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background: #009688;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #004d40;
+        }
+
+        #brand-header {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        #profile-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        #user-name {
+            font-size: 1.2em;
+        }
+
+        #nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        #nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        #nav-links a i {
+            margin-right: 64px;
+        }
+
+        #nav-links a:hover {
+            color: #e0f2f1;
+        }
+
+        #settings-icon {
+            color: #fff;
+            font-size: 1.5em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        #settings-icon:hover {
+            color: #e0f2f1;
+        }
+
+        #settings-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+
+        #settings-menu button {
+            background: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+            text-align: left;
+            transition: background 0.3s ease;
+        }
+
+        #settings-menu button:hover {
+            background: #e64a19;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #profile-info {
+                margin-bottom: 10px;
+            }
+
+            #nav-links {
+                margin-top: 10px;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div id="brand-header">Splannes</div>
+            <div id="profile-info">
+                <img id="profile-photo" src="" alt="Profile Photo">
+                <span id="user-name"></span>
+            </div>
+            <div id="nav-links">
+                
+                <a href="#" data-page="video-call.html"><i class="fas fa-video"></i> Video Call</a>
+              
+                <a href="#" data-page="live-code.html"><i class="fas fa-code"></i> Live </a>
+            </div>
+            <a id="settings-icon" href="#"><i class="fas fa-cog"></i></a>
+            <div id="settings-menu">
+                <button id="logout-button">Logout</button>
+                <button id="delete-account-button">Delete Account</button>
+                <button id="change-theme-button">Change Theme</button>
+            </div>
+        </nav>
+            <script src="/socket.io/socket.io.js"></script>
+    </header>
+    <main id="main-content">
+        <!-- Main content will be dynamically loaded here -->
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('authToken');
+
+            if (!token) {
+                window.location.href = '/login.html'; // Redirect to login if no token
+                return;
+            }
+
+            // Fetch user data
+            try {
+                const response = await fetch('/user-profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('profile-photo').src = `${user.photo}`;
+                    document.getElementById('user-name').textContent = user.username;
+                } else {
+                    console.error('Failed to fetch user profile');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            }
+
+            // Logout functionality
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html'; // Redirect to login
+            });
+
+            // Existing content loading script
+            const mainContent = document.getElementById('main-content');
+            const links = document.querySelectorAll('#nav-links a');
+
+            links.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    loadPage(page);
+                });
+            });
+
+            function loadPage(page) {
+                fetch(page)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        mainContent.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                        mainContent.innerHTML = '<p>Content could not be loaded. Please try again later.</p>';
+                    });
+            }
+
+            // JavaScript for toggling settings menu
+            document.getElementById('settings-icon').addEventListener('click', function(event) {
+                event.preventDefault();
+                const menu = document.getElementById('settings-menu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
+</body>
+</html>

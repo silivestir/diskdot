@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Code Editor</title>
+
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+
+    <!-- Socket.io -->
+    <script defer src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/javascript-hint.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    
+    
+</head>
+    <style>
+        .user-cursor {
+            position: absolute;
+            border-left: 2px solid red;
+            height: 1.2em;  /* Adjust based on your font size */
+            pointer-events: none;
+            z-index: 1000; /* Ensure it's on top of the editor */
+        }
+
+        #editor {
+            position: relative; /* Needed for absolute positioning of cursors */
+        }
+    </style>
+</head>
+<body>
+
+<textarea id="editor"></textarea>
+<input type="text" id="groupName" placeholder="Enter group name" />
+<button id="joinGroup">Join Group</button>
+<button id="saveFile">Save</button>
+<button id="downloadFile">Download</button>
+
+<button id="recordAudio">Record Audio</button>
+<button id="stopRecording" disabled>Stop Recording</button>
+<button id="playAudioList">Play Audio List</button>
+
+<div id="audioContainer"></div>
+
+<div id="userCursors"></div>
+
+<script>
+    var user = prompt("Enter your username:");
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
+      lineNumbers: true,
+      theme:"monokai",
+      mode: "javascript"
+    });
+document.getElementById("userCursors").innerHTML=user;
+    var socket = io();
+    var currentGroup = null;
+
+    document.getElementById('joinGroup').onclick = function() {
+        var groupName = document.getElementById('groupName').value;
+        if (groupName && groupName !== currentGroup) {
+            if (currentGroup) {
+                socket.leave(currentGroup);
+            }
+            currentGroup = groupName;
+            socket.emit('join class', { className: currentGroup, userName: user });
+            document.getElementById('groupName').value = '';
+        }
+    };
+
+    socket.on('class joined', ({ className, userName }) => {
+        console.log(`${userName} joined class ${className}`);
+        socket.join(className);
+    });
+
+    socket.on('document-update', function(msg) {
+        if(msg.user !== user && msg.className === currentGroup) {
+            myCodeMirror.setValue(msg.value);
+        }
+    });
+
+    myCodeMirror.on('keyup', function () {
+        if (currentGroup) {
+            var msg = {
+                user: user,
+                className: currentGroup,
+                value: myCodeMirror.getValue(),
+                cursor: myCodeMirror.getCursor()
+            };
+            socket.emit('document-update', msg);
+        }
+    });
+
+    myCodeMirror.on('cursorActivity', function() {
+        if (currentGroup) {
+            var cursorPos = myCodeMirror.getCursor();
+            socket.emit('cursor-update', {
+                user: user,
+                className: currentGroup,
+                cursor: cursorPos
+            });
+        }
+    });
+
+    socket.on('cursor-update', function(data) {
+        var cursorId = `cursor-${data.user}`;
+        var cursorElement = document.getElementById(cursorId);
+        
+        // Create or update the cursor marker for the user
+        if (!cursorElement) {
+            cursorElement = document.createElement('div');
+            cursorElement.id = cursorId;
+            cursorElement.className = 'user-cursor';
+            document.getElementById('userCursors').appendChild(cursorElement);
+        }
+        
+        var coords = myCodeMirror.cursorCoords(data.cursor);
+        cursorElement.style.top = `${coords.top}px`;
+        cursorElement.style.left = `${coords.left}px`;
+    });
+
+    document.getElementById('saveFile').onclick = function() {
+        const code = myCodeMirror.getValue();
+        localStorage.setItem('savedCode', code); // Saving to local storage
+        alert('Code saved locally!');
+    };
+
+    document.getElementById('downloadFile').onclick = function() {
+        const code = myCodeMirror.getValue();
+        const blob = new Blob([code], { type: 'text/javascript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'code.js'; // File name
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    socket.on("code change", code => {
+        console.log(code);
+        socket.emit("code change", code);
+    });
+    
+    
+    let mediaRecorder;
+    let audioChunks = [];
+
+    document.getElementById('recordAudio').onclick = async function() {
+        // Request access to the microphone
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = event => {
+            audioChunks.push(event.data); // Store audio chunks
+        };
+
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Send audio data to server
+                socket.emit('audio-data', reader.result.split(',')[1]); // Send base64 data
+                audioChunks = []; // Reset chunks
+            };
+            reader.readAsDataURL(audioBlob);
+        };
+
+        mediaRecorder.start();
+        document.getElementById('recordAudio').disabled = true;
+        document.getElementById('stopRecording').disabled = false;
+    };
+
+    document.getElementById('stopRecording').onclick = function() {
+        mediaRecorder.stop();
+        document.getElementById('recordAudio').disabled = false;
+        document.getElementById('stopRecording').disabled = true;
+    };
+
+    document.getElementById('playAudioList').onclick = function() {
+        socket.emit('request-audio-list');
+    };
+
+    socket.on('audio-list', (audioFiles) => {
+        const audioContainer = document.getElementById('audioContainer');
+        audioContainer.innerHTML = ''; // Clear previous audio elements
+let cc=audioFiles.length-1;
+let au=[];
+au.push(audioFiles[cc]);
+        au.forEach(file => {
+            const audioElement = document.createElement('audio');
+            audioElement.src = file;
+            audioElement.controls = true; // Show controls
+            audioElement.play(); // Auto-play after loading
+            audioContainer.appendChild(audioElement);
+        });
+    });
+
+
+    
+</script>
+
+</body>
+</html>
+
+
+
