@@ -8,6 +8,8 @@ const path = require('path');
 const { Pool } = require('pg');
 const fs = require('fs');
 const http = require('http');
+
+const app = express();
 const socketIo = require('socket.io');
 const AUDIO_DIR = path.join(__dirname, 'audio');
 if (!fs.existsSync(AUDIO_DIR)){
@@ -18,7 +20,6 @@ app.use(express.static('public')); // Serve the static files (HTML + JS)
 
 
 
-const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
@@ -357,7 +358,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-const PORT =3000;
+const PORT = 3000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
