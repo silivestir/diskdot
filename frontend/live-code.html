@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,210 +12,240 @@
     <!-- Socket.io -->
     <script defer src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     
-        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/javascript-hint.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
     
-    
-</head>
-    <style>
-        .user-cursor {
-            position: absolute;
-            border-left: 2px solid red;
-            height: 1.2em;  /* Adjust based on your font size */
-            pointer-events: none;
-            z-index: 1000; /* Ensure it's on top of the editor */
-        }
-
-        #editor {
-            position: relative; /* Needed for absolute positioning of cursors */
-        }
-    </style>
+    <!-- Code for custom features like cursor sharing, audio recording, etc. -->
 </head>
 <body>
 
-<textarea id="editor"></textarea>
-<input type="text" id="groupName" placeholder="Enter group name" />
-<button id="joinGroup">Join Group</button>
-<button id="saveFile">Save</button>
-<button id="downloadFile">Download</button>
+    <!-- Header (same as home page) -->
+    <header>
+        <nav>
+            <div id="brand-header">Splannes</div>
+            <div id="profile-info">
+                <img id="profile-photo" src="" alt="Profile Photo">
+                <span id="user-name"></span>
+            </div>
+            <div id="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                <a href="video-call.html"><i class="fas fa-video"></i> Video Call</a>
+                <a href="live-code.html"><i class="fas fa-code"></i> Live</a>
+            </div>
+            <a id="settings-icon" href="#"><i class="fas fa-cog"></i></a>
+            <div id="settings-menu">
+                <button id="logout-button">Logout</button>
+                <button id="delete-account-button">Delete Account</button>
+                <button id="change-theme-button">Change Theme</button>
+            </div>
+        </nav>
+    </header>
 
-<button id="recordAudio">Record Audio</button>
-<button id="stopRecording" disabled>Stop Recording</button>
-<button id="playAudioList">Play Audio List</button>
+    <main>
+        <!-- Collaborative Code Editor Section -->
+        <textarea id="editor"></textarea>
+        <input type="text" id="groupName" placeholder="Enter group name" />
+        <button id="joinGroup">Join Group</button>
+        <button id="saveFile">Save</button>
+        <button id="downloadFile">Download</button>
+        <button id="recordAudio">Record Audio</button>
+        <button id="stopRecording" disabled>Stop Recording</button>
+        <button id="playAudioList">Play Audio List</button>
 
-<div id="audioContainer"></div>
+        <div id="audioContainer"></div>
+        <div id="userCursors"></div>
+    </main>
 
-<div id="userCursors"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check for the authToken in localStorage and fetch user data
+            const token = localStorage.getItem('authToken');
 
-<script>
-    var user = prompt("Enter your username:");
-    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
-      lineNumbers: true,
-      theme:"monokai",
-      mode: "javascript"
-    });
-document.getElementById("userCursors").innerHTML=user;
-    var socket = io();
-    var currentGroup = null;
-
-    document.getElementById('joinGroup').onclick = function() {
-        var groupName = document.getElementById('groupName').value;
-        if (groupName && groupName !== currentGroup) {
-            if (currentGroup) {
-                socket.leave(currentGroup);
+            if (!token) {
+                window.location.href = '/login.html'; // Redirect to login if no token
+                return;
             }
-            currentGroup = groupName;
-            socket.emit('join class', { className: currentGroup, userName: user });
-            document.getElementById('groupName').value = '';
-        }
-    };
 
-    socket.on('class joined', ({ className, userName }) => {
-        console.log(`${userName} joined class ${className}`);
-        socket.join(className);
-    });
+            try {
+                const response = await fetch('/user-profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
 
-    socket.on('document-update', function(msg) {
-        if(msg.user !== user && msg.className === currentGroup) {
-            myCodeMirror.setValue(msg.value);
-        }
-    });
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('profile-photo').src = user.photo;
+                    document.getElementById('user-name').textContent = user.username;
+                } else {
+                    console.error('Failed to fetch user profile');
+                }
+            } catch (err) {
+                console.error('Error fetching user data:', err);
+            }
 
-    myCodeMirror.on('keyup', function () {
-        if (currentGroup) {
-            var msg = {
-                user: user,
-                className: currentGroup,
-                value: myCodeMirror.getValue(),
-                cursor: myCodeMirror.getCursor()
-            };
-            socket.emit('document-update', msg);
-        }
-    });
-
-    myCodeMirror.on('cursorActivity', function() {
-        if (currentGroup) {
-            var cursorPos = myCodeMirror.getCursor();
-            socket.emit('cursor-update', {
-                user: user,
-                className: currentGroup,
-                cursor: cursorPos
+            // Logout functionality
+            document.getElementById('logout-button').addEventListener('click', () => {
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html'; // Redirect to login
             });
-        }
-    });
 
-    socket.on('cursor-update', function(data) {
-        var cursorId = `cursor-${data.user}`;
-        var cursorElement = document.getElementById(cursorId);
-        
-        // Create or update the cursor marker for the user
-        if (!cursorElement) {
-            cursorElement = document.createElement('div');
-            cursorElement.id = cursorId;
-            cursorElement.className = 'user-cursor';
-            document.getElementById('userCursors').appendChild(cursorElement);
-        }
-        
-        var coords = myCodeMirror.cursorCoords(data.cursor);
-        cursorElement.style.top = `${coords.top}px`;
-        cursorElement.style.left = `${coords.left}px`;
-    });
+            // JavaScript for toggling settings menu
+            document.getElementById('settings-icon').addEventListener('click', function(event) {
+                event.preventDefault();
+                const menu = document.getElementById('settings-menu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            });
 
-    document.getElementById('saveFile').onclick = function() {
-        const code = myCodeMirror.getValue();
-        localStorage.setItem('savedCode', code); // Saving to local storage
-        alert('Code saved locally!');
-    };
+            // Collaborative Code Editor and Socket.IO Logic
+            var user = prompt("Enter your username:");
+            var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
+                lineNumbers: true,
+                theme: "monokai",
+                mode: "javascript"
+            });
 
-    document.getElementById('downloadFile').onclick = function() {
-        const code = myCodeMirror.getValue();
-        const blob = new Blob([code], { type: 'text/javascript' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'code.js'; // File name
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    };
+            var socket = io();
+            var currentGroup = null;
 
-    socket.on("code change", code => {
-        console.log(code);
-        socket.emit("code change", code);
-    });
-    
-    
-    let mediaRecorder;
-    let audioChunks = [];
-
-    document.getElementById('recordAudio').onclick = async function() {
-        // Request access to the microphone
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = event => {
-            audioChunks.push(event.data); // Store audio chunks
-        };
-
-        mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                // Send audio data to server
-                socket.emit('audio-data', reader.result.split(',')[1]); // Send base64 data
-                audioChunks = []; // Reset chunks
+            document.getElementById('joinGroup').onclick = function() {
+                var groupName = document.getElementById('groupName').value;
+                if (groupName && groupName !== currentGroup) {
+                    if (currentGroup) {
+                        socket.leave(currentGroup);
+                    }
+                    currentGroup = groupName;
+                    socket.emit('join class', { className: currentGroup, userName: user });
+                    document.getElementById('groupName').value = '';
+                }
             };
-            reader.readAsDataURL(audioBlob);
-        };
 
-        mediaRecorder.start();
-        document.getElementById('recordAudio').disabled = true;
-        document.getElementById('stopRecording').disabled = false;
-    };
+            socket.on('class joined', ({ className, userName }) => {
+                console.log(`${userName} joined class ${className}`);
+                socket.join(className);
+            });
 
-    document.getElementById('stopRecording').onclick = function() {
-        mediaRecorder.stop();
-        document.getElementById('recordAudio').disabled = false;
-        document.getElementById('stopRecording').disabled = true;
-    };
+            socket.on('document-update', function(msg) {
+                if (msg.user !== user && msg.className === currentGroup) {
+                    myCodeMirror.setValue(msg.value);
+                }
+            });
 
-    document.getElementById('playAudioList').onclick = function() {
-        socket.emit('request-audio-list');
-    };
+            myCodeMirror.on('keyup', function () {
+                if (currentGroup) {
+                    var msg = {
+                        user: user,
+                        className: currentGroup,
+                        value: myCodeMirror.getValue(),
+                        cursor: myCodeMirror.getCursor()
+                    };
+                    socket.emit('document-update', msg);
+                }
+            });
 
-    socket.on('audio-list', (audioFiles) => {
-        const audioContainer = document.getElementById('audioContainer');
-        audioContainer.innerHTML = ''; // Clear previous audio elements
-let cc=audioFiles.length-1;
-let au=[];
-au.push(audioFiles[cc]);
-        au.forEach(file => {
-            const audioElement = document.createElement('audio');
-            audioElement.src = file;
-            audioElement.controls = true; // Show controls
-            audioElement.play(); // Auto-play after loading
-            audioContainer.appendChild(audioElement);
+            myCodeMirror.on('cursorActivity', function() {
+                if (currentGroup) {
+                    var cursorPos = myCodeMirror.getCursor();
+                    socket.emit('cursor-update', {
+                        user: user,
+                        className: currentGroup,
+                        cursor: cursorPos
+                    });
+                }
+            });
+
+            socket.on('cursor-update', function(data) {
+                var cursorId = `cursor-${data.user}`;
+                var cursorElement = document.getElementById(cursorId);
+
+                if (!cursorElement) {
+                    cursorElement = document.createElement('div');
+                    cursorElement.id = cursorId;
+                    cursorElement.className = 'user-cursor';
+                    document.getElementById('userCursors').appendChild(cursorElement);
+                }
+
+                var coords = myCodeMirror.cursorCoords(data.cursor);
+                cursorElement.style.top = `${coords.top}px`;
+                cursorElement.style.left = `${coords.left}px`;
+            });
+
+            document.getElementById('saveFile').onclick = function() {
+                const code = myCodeMirror.getValue();
+                localStorage.setItem('savedCode', code);
+                alert('Code saved locally!');
+            };
+
+            document.getElementById('downloadFile').onclick = function() {
+                const code = myCodeMirror.getValue();
+                const blob = new Blob([code], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'code.js';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+
+            socket.on("code change", code => {
+                console.log(code);
+                socket.emit("code change", code);
+            });
+
+            let mediaRecorder;
+            let audioChunks = [];
+
+            document.getElementById('recordAudio').onclick = async function() {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        socket.emit('audio-data', reader.result.split(',')[1]);
+                        audioChunks = [];
+                    };
+                    reader.readAsDataURL(audioBlob);
+                };
+
+                mediaRecorder.start();
+                document.getElementById('recordAudio').disabled = true;
+                document.getElementById('stopRecording').disabled = false;
+            };
+
+            document.getElementById('stopRecording').onclick = function() {
+                mediaRecorder.stop();
+                document.getElementById('recordAudio').disabled = false;
+                document.getElementById('stopRecording').disabled = true;
+            };
+
+            document.getElementById('playAudioList').onclick = function() {
+                socket.emit('request-audio-list');
+            };
+
+            socket.on('audio-list', (audioFiles) => {
+                const audioContainer = document.getElementById('audioContainer');
+                audioContainer.innerHTML = '';
+                let cc = audioFiles.length - 1;
+                let au = [audioFiles[cc]];
+
+                au.forEach(file => {
+                    const audioElement = document.createElement('audio');
+                    audioElement.src = file;
+                    audioElement.controls = true;
+                    audioElement.play();
+                    audioContainer.appendChild(audioElement);
+                });
+            });
         });
-    });
-
-
-    
-</script>
-<!-- Load the core CodeMirror library first -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.js"></script>
-
-<!-- Then load the modes, addons, etc. -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/show-hint.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/matchbrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/closebrackets.min.js"></script>
-<!-- other addons -->
+    </script>
 
 </body>
 </html>
-
-
-
