@@ -8,37 +8,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    
     <!-- CodeMirror Core CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.css">
+    <!-- CodeMirror Theme (Dracula) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/theme/dracula.min.css">
+    <!-- JavaScript Mode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/mode/javascript/javascript.min.js"></script>
 
-<!-- CodeMirror Theme (Dracula) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/theme/dracula.min.css">
+    <!-- Auto-completion Addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/show-hint.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/show-hint.min.css">
+    
+    <!-- Bracket Matching Addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/matchbrackets.min.js"></script>
 
-<!-- JavaScript Mode -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/mode/javascript/javascript.min.js"></script>
+    <!-- Auto-close Brackets Addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/closebrackets.min.js"></script>
 
-<!-- Auto-completion Addon -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/show-hint.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/show-hint.min.css">
+    <!-- Line Wrapping Addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/wrap/hardwrap.min.js"></script>
 
-<!-- Bracket Matching Addon -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/matchbrackets.min.js"></script>
+    <!-- Search Addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/search/search.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/search/jump-to-line.min.js"></script>
 
-<!-- Auto-close Brackets Addon -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/edit/closebrackets.min.js"></script>
+    <!-- Key Bindings for Autocomplete (Ctrl+Space) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/anyword-hint.min.js"></script>
 
-<!-- Line Wrapping Addon -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/wrap/hardwrap.min.js"></script>
-
-<!-- Search Addon -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/search/search.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/search/jump-to-line.min.js"></script>
-
-<!-- Key Bindings for Autocomplete (Ctrl+Space) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/dialog/dialog.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/addon/hint/anyword-hint.min.js"></script>
-
-<!-- CodeMirror Core JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.js"></script>
+    <!-- CodeMirror Core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.6/codemirror.min.js"></script>
 
     <style>
         /* Basic reset and styling */
@@ -102,7 +100,7 @@
         }
 
         #nav-links a i {
-            margin-right: 64px;
+            margin-right: 10px;
         }
 
         #nav-links a:hover {
@@ -181,10 +179,9 @@
                 <span id="user-name"></span>
             </div>
             <div id="nav-links">
-                
-                <a href="#" data-page="video-call.html"><i class="fas fa-video"></i> Video Call</a>
-              
-                <a href="#" data-page="live-code.html"><i class="fas fa-code"></i> Live </a>
+                <!-- Direct navigation via href -->
+                <a href="video-call.html"><i class="fas fa-video"></i> Video Call</a>
+                <a href="live-code.html"><i class="fas fa-code"></i> Live</a>
             </div>
             <a id="settings-icon" href="#"><i class="fas fa-cog"></i></a>
             <div id="settings-menu">
@@ -193,13 +190,13 @@
                 <button id="change-theme-button">Change Theme</button>
             </div>
         </nav>
-            <script src="/socket.io/socket.io.js"></script>
     </header>
     <main id="main-content">
         <!-- Main content will be dynamically loaded here -->
     </main>
+
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('authToken');
 
             if (!token) {
@@ -208,56 +205,21 @@
             }
 
             // Fetch user data
-            try {
-                const response = await fetch('/user-profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    const user = await response.json();
-                    document.getElementById('profile-photo').src = `${user.photo}`;
-                    document.getElementById('user-name').textContent = user.username;
-                } else {
-                    console.error('Failed to fetch user profile');
-                }
-            } catch (err) {
-                console.error('Error:', err);
-            }
+            fetch('/user-profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            .then(response => response.json())
+            .then(user => {
+                document.getElementById('profile-photo').src = user.photo;
+                document.getElementById('user-name').textContent = user.username;
+            })
+            .catch(err => console.error('Error:', err));
 
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.removeItem('authToken');
                 window.location.href = '/login.html'; // Redirect to login
             });
-
-            // Existing content loading script
-            const mainContent = document.getElementById('main-content');
-            const links = document.querySelectorAll('#nav-links a');
-
-            links.forEach(link => {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const page = this.getAttribute('data-page');
-                    loadPage(page);
-                });
-            });
-
-            function loadPage(page) {
-                fetch(page)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        mainContent.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
-                        mainContent.innerHTML = '<p>Content could not be loaded. Please try again later.</p>';
-                    });
-            }
 
             // JavaScript for toggling settings menu
             document.getElementById('settings-icon').addEventListener('click', function(event) {
