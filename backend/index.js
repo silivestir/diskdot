@@ -76,7 +76,7 @@ const deleteAllUsers = async () => {
 };
 
 // Uncomment the following line if you want to delete all users on server start
-// deleteAllUsers();
+ deleteAllUsers();
 
 createTable(); // Ensure table exists on server start
 
@@ -120,6 +120,7 @@ app.post('/login', async (req, res) => {
         if (user && await bcrypt.compare(password, user.password)) {
             const otp = Math.floor(100000 + Math.random() * 900000);
             otpStore[email] = otp; // Store OTP temporarily
+            console.log(otp)
             await transporter.sendMail({
                 from: 'Splannes',
                 to: email,
@@ -157,6 +158,8 @@ app.post('/register', upload.single('photo'), async (req, res) => {
         await query('INSERT INTO SplannesUsers (username, email, password, photo) VALUES ($1, $2, $3, $4)', [username, email, hashedPassword, photoPath]);
         const otp = Math.floor(100000 + Math.random() * 900000);
         otpStore[email] = otp; // Store OTP temporarily
+
+           console.log(otp)
         await transporter.sendMail({
             from: 'Splannes',
             to: email,
