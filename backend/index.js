@@ -192,7 +192,7 @@ app.post('/verify-otp', (req, res) => {
     console.log(`Stored OTP: ${storedOtp}`);
     console.log(`Received OTP: ${receivedOtp}`);
 
-    if (storedOtp && storedOtp === receivedOtp) {
+    if (storedOtp ==receivedOtp) {
         delete otpStore[email]; // Clear OTP after successful verification
         const token = jwt.sign({ email }, 'your_jwt_secret', { expiresIn: '1h' }); // Use a stronger secret in production
         res.json({ message: 'OTP verified successfully', token, redirectUrl: '/homepage.html' }); // Redirect URL after login
