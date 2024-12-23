@@ -76,7 +76,7 @@ const deleteAllUsers = async () => {
 };
 
 // Uncomment the following line if you want to delete all users on server start
- deleteAllUsers();
+ //deleteAllUsers();
 
 createTable(); // Ensure table exists on server start
 
