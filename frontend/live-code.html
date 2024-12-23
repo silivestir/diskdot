@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style> 
+        #profile-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FalksRoom</title>
+    <title>FalkesRoom</title>
 
     <!-- CodeMirror CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
@@ -64,7 +74,7 @@
             const token = localStorage.getItem('authToken');
 
             if (!token) {
-                window.location.href = '/login.html'; // Redirect to login if no token
+                window.location.href = '/index.html'; // Redirect to login if no token
                 return;
             }
 
@@ -87,7 +97,7 @@
             // Logout functionality
             document.getElementById('logout-button').addEventListener('click', () => {
                 localStorage.removeItem('authToken');
-                window.location.href = '/login.html'; // Redirect to login
+                window.location.href = '/index.html'; // Redirect to login
             });
 
             // JavaScript for toggling settings menu
