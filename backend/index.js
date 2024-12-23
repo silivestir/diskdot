@@ -185,14 +185,15 @@ Silvestir Assey, Developer at Splannes
 app.post('/verify-otp', (req, res) => {
     const { email, otp } = req.body;
 
-    // Convert OTPs to strings for comparison
-    const storedOtp = otpStore[email]?.toString();
-    const receivedOtp = otp.toString();
+    // Convert OTPs to strings and trim any spaces for comparison
+    const storedOtp = otpStore[email]?.toString().trim();  // Ensure it's a string and trim spaces
+    const receivedOtp = otp.toString().trim();  // Convert and trim the received OTP
 
-    console.log(`Stored OTP: ${storedOtp}`);
-    console.log(`Received OTP: ${receivedOtp}`);
+    console.log(`Stored OTP: '${storedOtp}'`);
+    console.log(`Received OTP: '${receivedOtp}'`);
 
-    if (storedOtp ==receivedOtp) {
+    // Compare the OTPs
+    if (storedOtp === receivedOtp) {
         delete otpStore[email]; // Clear OTP after successful verification
         const token = jwt.sign({ email }, 'your_jwt_secret', { expiresIn: '1h' }); // Use a stronger secret in production
         res.json({ message: 'OTP verified successfully', token, redirectUrl: '/homepage.html' }); // Redirect URL after login
@@ -200,6 +201,7 @@ app.post('/verify-otp', (req, res) => {
         res.status(400).json({ message: 'Invalid OTP' });
     }
 });
+
 
 app.get('/user-profile', async (req, res) => {
     const authHeader = req.headers['authorization'];
