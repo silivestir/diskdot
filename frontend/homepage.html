@@ -262,12 +262,135 @@ button.cta-btn:hover {
     background-color: rgba(0, 0, 0, 0.7);
 }
 
+
+        /* Basic Reset and Layout */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    overflow-x: hidden;
+}
+
+/* Carousel container */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+/* Slide styles with gradient background */
+.carousel-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(45deg, rgba(0, 150, 136, 0.7), rgba(33, 150, 243, 0.7));
+    transition: transform 0.5s ease, background 1s ease;
+}
+
+.carousel-slide:nth-child(even) {
+    background: linear-gradient(45deg, rgba(255, 87, 34, 0.7), rgba(255, 193, 7, 0.7));
+}
+
+.slide-content {
+    text-align: center;
+    padding: 20px;
+    max-width: 80%;
+    color: white;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+p {
+    font-size: 1.2rem;
+    color: #eee;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    line-height: 1.6;
+}
+
+/* CTA button styling */
+button.cta-btn {
+    padding: 12px 30px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+button.cta-btn:hover {
+    background-color: #45a049;
+}
+
+/* Carousel navigation (arrows) */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: #fff;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.prev, .next {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Gradient Text Animations */
+h1 {
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow: 0 0 5px #fff, 0 0 10px #4caf50, 0 0 15px #4caf50;
+    }
+    50% {
+        text-shadow: 0 0 10px #ff5722, 0 0 20px #ff5722, 0 0 30px #ff5722;
+    }
+    100% {
+        text-shadow: 0 0 5px #fff, 0 0 10px #4caf50, 0 0 15px #4caf50;
+    }
+}
+
+
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <div id="brand-header">Splannes</div>
+            <div id="brand-header">folksrooms</div>
             <div id="profile-info">
                 <img id="profile-photo" src="" alt="Profile Photo">
                 <span id="user-name"></span>
@@ -287,70 +410,77 @@ button.cta-btn:hover {
         </nav>
     </header>
     <main id="main-content">
-       <div class="carousel-container">
-        <!-- Slide 1 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Welcome to Folksrooms!</h1>
-                <p>Where collaboration meets real-time innovation.</p>
-            </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Real-Time Class Sessions</h1>
-                <p>Engage in live voice and PDF slide sharing.</p>
-            </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Video Calls for Seamless Interaction</h1>
-                <p>Stay connected through high-quality video calling.</p>
-            </div>
-        </div>
-
-        <!-- Slide 4 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Real-Time Code Editing</h1>
-                <p>Collaborate and code together, instantly.</p>
-            </div>
-        </div>
-
-        <!-- Slide 5 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Collaborate on Documents in Real-Time</h1>
-                <p>Work on documents together, no matter where you are.</p>
-            </div>
-        </div>
-
-        <!-- Slide 6 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Voice Sessions for Instant Feedback</h1>
-                <p>Give and receive feedback, quickly and effectively.</p>
-            </div>
-        </div>
-
-        <!-- Slide 7 -->
-        <div class="carousel-slide">
-            <div class="slide-content">
-                <h1>Join the Community!</h1>
-                <p>Ready to collaborate? Sign up today and start your journey with Folksrooms!</p>
-                <button class="cta-btn">Get Started</button>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <div class="carousel-nav">
-            <span class="prev">&#10094;</span>
-            <span class="next">&#10095;</span>
+   <div class="carousel-container">
+    <!-- Slide 1 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Welcome to Folksrooms!</h1>
+            <p>Where collaboration meets real-time innovation.</p>
+            <p>Join us in a world where ideas flow seamlessly, and collaboration knows no boundaries.</p>
         </div>
     </div>
+
+    <!-- Slide 2 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Real-Time Class Sessions</h1>
+            <p>Engage in live voice and PDF slide sharing.</p>
+            <p>Collaborate with your peers in real-time, enhancing the learning experience.</p>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Video Calls for Seamless Interaction</h1>
+            <p>Stay connected through high-quality video calling.</p>
+            <p>Experience face-to-face collaboration, even if you're miles apart.</p>
+        </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Real-Time Code Editing</h1>
+            <p>Collaborate and code together, instantly.</p>
+            <p>Write, debug, and build code in real time with your teammates.</p>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Collaborate on Documents in Real-Time</h1>
+            <p>Work on documents together, no matter where you are.</p>
+            <p>See live edits, suggestions, and improvements instantly, creating better work faster.</p>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Voice Sessions for Instant Feedback</h1>
+            <p>Give and receive feedback, quickly and effectively.</p>
+            <p>Enhance your workflow with fast, clear communication during your sessions.</p>
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="carousel-slide">
+        <div class="slide-content">
+            <h1>Join the Community!</h1>
+            <p>Ready to collaborate? Sign up today and start your journey with Folksrooms!</p>
+            <button class="cta-btn">Get Started</button>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="carousel-nav">
+        <span class="prev">&#10094;</span>
+        <span class="next">&#10095;</span>
+    </div>
+</div>
+
 
 
         
@@ -359,7 +489,7 @@ button.cta-btn:hover {
 
     <script>
 
-        let currentIndex = 0;
+    let currentIndex = 0;
 const slides = document.querySelectorAll('.carousel-slide');
 const totalSlides = slides.length;
 
@@ -383,6 +513,10 @@ function updateCarousel() {
     const newTransform = -100 * currentIndex + '%';
     slides.forEach(slide => {
         slide.style.transform = `translateX(${newTransform})`;
+        // Reset the animation for new slide
+        slide.style.animation = 'none';
+        slide.offsetHeight; // Trigger reflow
+        slide.style.animation = 'fadeIn 1s forwards';
     });
 }
 
