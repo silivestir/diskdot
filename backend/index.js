@@ -20,7 +20,7 @@ app.use(express.static('public')); // Serve the static files (HTML + JS)
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
