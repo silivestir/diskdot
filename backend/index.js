@@ -18,7 +18,11 @@ if (!fs.existsSync(AUDIO_DIR)){
 
 app.use(express.static('public')); // Serve the static files (HTML + JS)
 
-
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -94,13 +98,16 @@ const transporter = nodemailer.createTransport({
 
 
 
+// In-memory store for users and files
+let users = {}; // Store connected users by group
+let files = {}; // Store uploaded files by group
 
 
 
 const upload = multer({ dest: 'uploads/' }); // Ensure 'uploads' directory is inside 'backend'
 
 let otpStore = {}; // Temporary OTP storage, use a persistent solution in production
-
+app.use(express.static("uploads"));
 // Function to execute a query
 const query = async (text, params) => {
     const client = await pool.connect();
@@ -122,15 +129,15 @@ app.post('/login', async (req, res) => {
             otpStore[email] = otp; // Store OTP temporarily
             console.log(otp)
             await transporter.sendMail({
-                from: 'Splannes',
+                from: 'folksrooms<silvestiriassey@gmail.com>',
                 to: email,
-                subject: 'Splannes Verification Code',
+                subject: 'folksrooms login Verification Code',
                 text: `Dear User,
 
-You are receiving this email because we want to verify that it's you. For security reasons, please do not share this OTP with anyone. Your Splannes verification code is ${otp}.
+You are receiving this email because we want to verify that it's you. For security reasons, please do not share this OTP with anyone. Your folksrooms verification code is ${otp}.
 
 Best regards,
-Silvestir Assey, Developer at Splannes
+Silivestir Assey, Developer at folksrooms
 
 
 
@@ -161,15 +168,15 @@ app.post('/register', upload.single('photo'), async (req, res) => {
 
            console.log(otp)
         await transporter.sendMail({
-            from: 'Splannes',
+            from: 'folksrooms<silvestiriassey@gmail.com>',
             to: email,
-            subject: 'Splannes Verification Code',
+            subject: 'folksrooms registration  Verification Code',
             text: `Dear User,
 
-You are receiving this email because we want to verify that it's you. For security reasons, please do not share this OTP with anyone. Your Splannes verification code is ${otp}.
+You are receiving this email because we want to verify that it's you. For security reasons, please do not share this OTP with anyone. Your folksrooms register verification code is ${otp}.
 
 Best regards,
-Silvestir Assey, Developer at Splannes
+Silvestir Assey, Developer at folksrooms
 
 
 
@@ -355,12 +362,106 @@ app.get('/audio/:filename', (req, res) => {
 
 
 
+const setupPdfFunction = (server) => {
 
+
+
+    const upload = multer({ dest: 'uploads/' });
+
+
+    let users = {};
+    let files = {};
+
+    const io = socketIo(server);
+
+
+    io.on('connection', (socket) => {
+        console.log('A user connected:', socket.id);
+
+        let groupName = null;
+
+        // Join a group when user joins
+        socket.on('join-group', (group) => {
+            groupName = group;
+            if (!users[groupName]) {
+                users[groupName] = [];
+            }
+            users[groupName].push(socket.id);
+            socket.join(groupName);
+            console.log(`${socket.id} joined group: ${groupName}`);
+        });
+
+        // Handle file clicked event (open the file)
+        socket.on('file-clicked', (data) => {
+            console.log(`File clicked: ${data.filePath}`);
+            io.to(groupName).emit('alert-file', data.filePath);
+        });
+
+        // Handle drawing events
+        socket.on('drawing', (data) => {
+            socket.to(groupName).emit('drawing', data);
+        });
+
+        // Handle WebRTC signaling events (voice chat)
+        socket.on('webrtc-offer', (data) => {
+            socket.to(data.peerId).emit('webrtc-offer', data);
+        });
+
+        socket.on('webrtc-answer', (data) => {
+            socket.to(data.peerId).emit('webrtc-answer', data);
+        });
+
+        socket.on('new-peer', (peerId) => {
+            socket.to(peerId).emit('new-peer', socket.id);
+        });
+
+        // Handle disconnection
+        socket.on('disconnect', () => {
+            if (groupName) {
+                const index = users[groupName].indexOf(socket.id);
+                if (index !== -1) {
+                    users[groupName].splice(index, 1);
+                }
+                console.log(`${socket.id} disconnected from group: ${groupName}`);
+            }
+        });
+    });
+
+    // Set up the upload route
+    const uploadRoute = express.Router();
+
+    app.post('/upload', upload.single('file'), (req, res) => {
+        const filePath = `/uploads/${req.file.filename}`;
+        const groupName = req.body.groupName;
+
+        // Save file info in memory (you could save it to a database here)
+        if (!files[groupName]) {
+            files[groupName] = [];
+        }
+
+        files[groupName].push(filePath);
+
+        // Emit file upload event to group members
+        io.to(groupName).emit('new-file', { filePath });
+
+        res.json({ filePath });
+    });
+
+    // Return the upload route so it can be used in the main app
+    return uploadRoute;
+};
+setupPdfFunction(server)
 // Error handling middleware (optional)
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
+
+setInterval(() => {
+    fetch("https://folksrooms.onrender.com/index.html")
+        .then(() => console.log("-------- --------"))
+        .catch(err => console.error("------", err));
+}, 30000);
 
 // Start the server
 // Start the server
