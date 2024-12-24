@@ -241,23 +241,6 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
 
-        // Function to decode JWT token
-        function parseJwt(token) {
-          const base64Url = token.split('.')[1];
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-          return JSON.parse(atob(base64));
-        }
-
-        // Retrieve the token from localStorage
-        const token = localStorage.getItem('authToken');
-
-      
-          // Decode the token to get user data
-          const userData = parseJwt(token);
-
-          // Display the user's username in the navbar
-          document.getElementById('user-name').innerText = `Hi, ${userData.username}`;
-
   const socket = io();
 
 
