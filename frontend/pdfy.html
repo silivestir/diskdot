@@ -1,0 +1,673 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>roitech eduction solution</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+  
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    #canvas {
+      border: 1px solid #000;
+      display: block;
+      margin: 20px auto;
+      background-color: white;
+    }
+    .controls {
+      text-align: center;
+      margin: 10px;
+    }
+    .controls input {
+      padding: 5px;
+      margin: 10px 5px;
+    }
+    .file-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .file-item {
+      padding: 10px;
+      background-color: #ddd;
+      margin: 5px 0;
+      cursor: pointer;
+    }
+    .file-item:hover {
+      background-color: #ccc;
+    }
+    body {
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .navbar {
+      background-color: rgba(0, o.1, 0.5, 0.8); /* Transparent blue */
+    }
+    .report{ display: none}
+    .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-post-container {
+        position: sticky;
+        top: 70px; /* Adjust based on navbar height */
+        z-index: 1000;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .posts-container {
+        /*overflow-y: auto;*/
+        flex-grow: 1;
+    }
+
+    .post {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-pic {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .post-content {
+        flex-grow: 1;
+    }
+
+    .post-author {
+        font-weight: bold;
+    }
+
+    .post-date, .time-elapsed {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .create-post-content textarea {
+        width: 100%;
+        height: 80px;
+        padding: 10px;
+        border: none;
+        resize: none;
+        font-size: 1.1rem;
+        outline: none;
+    }
+
+    .create-post-content textarea:focus {
+        box-shadow: none;
+    }
+
+    .create-post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid #e6e6e6;
+    }
+
+    .create-post-actions button {
+        padding: 6px 12px;
+    }
+
+    .create-post-options {
+        display: flex;
+        align-items: center;
+    }
+
+    .create-post-options button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #1DA1F2;
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .create-post-options button:hover {
+        color: #007bff;
+    }
+
+
+    .read-more {
+        cursor: pointer;
+        color: #007bff;
+        text-decoration: underline;
+    }
+    .like,.comment,.report {
+      text-decoration: none;
+    }
+
+    .container-fluid {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    #posts-container {
+        padding: 10px 0;
+        height: calc(100vh - 240px); /* Adjust this value based on navbar and create post height */
+        /*overflow-y: scroll;*/
+    }
+</style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script src="pdf.min.js"></script>
+<script src="pdf.worker.min.js"></script>
+    
+     <script src="pdf.min.mjs"></script> 
+
+   <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <div class="container navbar">
+    <a class="navbar-brand me-2" href="homepage.html">
+      <i class="bi bi-journal-bookmark"></i> roitecheducation
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarButtonsExample" aria-controls="navbarButtonsExample" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarButtonsExample">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="homepage.html">
+            <i class="bi bi-house-door"></i> Home
+          </a>
+        </li>
+        <!-- New Nav Links -->
+        <li class="nav-item">
+          <a class="nav-link" href="profile.html">
+            <i class="bi bi-person"></i> Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="advert.html">
+            <i class="bi bi-chat-dots"></i> advertisments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="realtime-editor.html">
+            <i class="bi blink-cursor"></i>real time editor
+          </a>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-link" href="pdfy.html">
+            <i class="bi blink-cursor"></i>realtime slides talks
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        <span id="user-name" class="me-3"></span>
+        <button id="logout" type="button" class="btn btn-danger">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+  <div class="controls">
+    <input type="text" id="groupName" placeholder="Enter Group Name">
+    <button id="joinGroup">Join Group</button>
+    <br>
+    <input type="file" id="fileInput" />
+    <br>
+    <button id="startVoice">Start Voice Chat</button>
+    <ul id="fileList" class="file-list"></ul>
+  </div>
+
+ 
+ <!--<button id="show-pdf-button">Show PDF</button>-->
+<div id="main">
+<div id="div1">
+<div id="pdf-main-container">
+	<div id="pdf-loader">roitech education college is loadng book ...</div>
+	<div id="pdf-contents">
+		<div id="pdf-meta">
+			<div id="pdf-buttons">
+				<button id="pdf-prev">Previous</button>
+				<button id="pdf-next">Next</button>
+			</div>
+			<div id="page-count-container">Page <div id="pdf-current-page"></div> of <div id="pdf-total-pages"></div></div>
+		</div>
+		<!-- <canvas id="pdf-canvas" width="400"></canvas> -->
+    <canvas id="canvas" width="600" height="400"></canvas>
+		<div id="page-loader">Loading page ...</div>
+	</div>
+	
+</div></div>
+</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+
+        // Function to decode JWT token
+        function parseJwt(token) {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          return JSON.parse(atob(base64));
+        }
+
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem('authToken');
+
+      
+          // Decode the token to get user data
+          const userData = parseJwt(token);
+
+          // Display the user's username in the navbar
+          document.getElementById('user-name').innerText = `Hi, ${userData.username}`;
+
+  const socket = io();
+
+
+
+// Function to render the selected PDF file
+function renderPDF(path) {
+    const filename = path.split('/').pop(); // Extract filename from path
+    showPDF(filename); // Render the selected file when clicked
+}
+
+
+var _PDF_DOC,
+    _CURRENT_PAGE,
+    _TOTAL_PAGES,
+    _PAGE_RENDERING_IN_PROGRESS = 0,
+    _CANVAS = document.querySelector('#canvas');
+
+// initialize and load the PDF
+async function showPDF(pdf_url) {
+    document.querySelector("#pdf-loader").style.display = 'block';
+
+    // get handle of pdf document
+    try {
+     // alert(pdf_url)
+      
+        _PDF_DOC = await pdfjsLib.getDocument({ url: pdf_url });
+    }
+    catch(error) {
+        alert(error.message);
+    }
+
+    // total pages in pdf
+    _TOTAL_PAGES = _PDF_DOC.numPages;
+    
+    // Hide the pdf loader and show pdf container
+    document.querySelector("#pdf-loader").style.display = 'none';
+    document.querySelector("#pdf-contents").style.display = 'block';
+    document.querySelector("#pdf-total-pages").innerHTML = _TOTAL_PAGES;
+
+    // show the first page
+    showPage(1);
+}
+
+// load and render specific page of the PDF
+async function showPage(page_no) {
+    _PAGE_RENDERING_IN_PROGRESS = 1;
+    _CURRENT_PAGE = page_no;
+
+    // disable Previous & Next buttons while page is being loaded
+    document.querySelector("#pdf-next").disabled = true;
+    document.querySelector("#pdf-prev").disabled = true;
+
+    // while page is being rendered hide the canvas and show a loading message
+    document.querySelector("#canvas").style.display = 'none';
+    document.querySelector("#page-loader").style.display = 'block';
+
+    // update current page
+    document.querySelector("#pdf-current-page").innerHTML = page_no;
+    
+    // get handle of page
+    try {
+        var page = await _PDF_DOC.getPage(page_no);
+    }
+    catch(error) {
+        alert(error.message);
+    }
+
+    // original width of the pdf page at scale 1
+    var pdf_original_width = page.getViewport(1).width;
+    
+    // as the canvas is of a fixed width we need to adjust the scale of the viewport where page is rendered
+    var scale_required = _CANVAS.width / pdf_original_width;
+
+    // get viewport to render the page at required scale
+    var viewport = page.getViewport(scale_required);
+
+    // set canvas height same as viewport height
+    _CANVAS.height = viewport.height;
+
+    // setting page loader height for smooth experience
+    document.querySelector("#page-loader").style.height =  _CANVAS.height + 'px';
+    document.querySelector("#page-loader").style.lineHeight = _CANVAS.height + 'px';
+
+    // page is rendered on <canvas> element
+    var render_context = {
+        canvasContext: _CANVAS.getContext('2d'),
+        viewport: viewport
+    };
+        
+    // render the page contents in the canvas
+    try {
+        await page.render(render_context);
+    }
+    catch(error) {
+        alert(error.message);
+    }
+
+    _PAGE_RENDERING_IN_PROGRESS = 0;
+
+    // re-enable Previous & Next buttons
+    document.querySelector("#pdf-next").disabled = false;
+    document.querySelector("#pdf-prev").disabled = false;
+
+    // show the canvas and hide the page loader
+    document.querySelector("#canvas").style.display = 'block';
+    document.querySelector("#page-loader").style.display = 'none';
+}
+
+// click on the "Previous" page button
+document.querySelector("#pdf-prev").addEventListener('click', function() {
+    if(_CURRENT_PAGE != 1)
+        showPage(--_CURRENT_PAGE);
+});
+
+// click on the "Next" page button
+document.querySelector("#pdf-next").addEventListener('click', function() {
+    if(_CURRENT_PAGE != _TOTAL_PAGES)
+        showPage(++_CURRENT_PAGE);
+});
+</script>
+
+
+
+<script>
+    // Functi
+document.addEventListener("DOMContentLoaded", async function() {
+    await fetchNotifications();
+});
+
+async function fetchNotifications() {
+    try {
+        const userId = getUserId(); // Get the user ID from the function
+        console.log('User ID:', userId);
+
+        const response = await fetch(`/user/notifications/${userId}`, { // Fetch notifications based on the user ID
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch notifications: ${response.status}`);
+        }
+
+        const notifications = await response.json();
+        renderNotifications(notifications);
+    } catch (error) {
+        console.error('Error getting notifications:', error);
+    }
+}
+
+function renderNotifications(notifications) {
+    const notificationList = document.getElementById('notificationList');
+    const notificationBadge = document.getElementById('notificationBadge');
+    let unreadCount = 0;
+    notificationList.innerHTML = '';
+
+    notifications.forEach(notification => {
+        if (!notification.seen) {
+            unreadCount++;
+        }
+        const listItem = document.createElement('a');
+        listItem.classList.add('dropdown-item');
+        listItem.innerText = notification.message;
+        notificationList.appendChild(listItem);
+    });
+
+    if (unreadCount > 0) {
+        notificationBadge.innerText = unreadCount;
+    } else {
+        notificationBadge.style.display = 'none';
+    }
+}
+
+function getUserId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('userId');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+let groupName;
+let localStream;
+let peers = {};
+
+// Canvas setup
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+let lastX, lastY;
+
+// File upload setup
+const fileInput = document.getElementById("fileInput");
+const fileList = document.getElementById("fileList");
+
+// Join group
+document.getElementById("joinGroup").addEventListener("click", () => {
+  groupName = document.getElementById("groupName").value;
+  if (groupName) {
+    socket.emit("join-group", groupName);
+    alert(`Joined group: ${groupName}`);
+  }
+});
+
+// Handle file uploads
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("groupName", groupName);
+
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // Emit file notification to group members
+        socket.emit("new-file", { groupName, filePath: data.filePath });
+        
+        // Add file to the file list
+        const li = document.createElement("li");
+        li.textContent = data.filePath;
+        li.classList.add("file-item");
+        fileList.appendChild(li);
+      })
+      .catch((err) => console.error(err));
+  }
+});
+
+// Handle new file notifications
+socket.on("new-file", ({ filePath }) => {
+  const li = document.createElement("li");
+  li.textContent = filePath;
+  li.classList.add("file-item");
+  fileList.appendChild(li);
+});
+
+// Handle file click
+fileList.addEventListener("click", (e) => {
+  if (e.target && e.target.classList.contains("file-item")) {
+    const filePath = e.target.textContent;
+    socket.emit("file-clicked", { groupName, filePath });
+  }
+});
+
+socket.on("alert-file", (filePath) => {
+  alert(`File clicked: ${filePath}`);
+  
+  renderPDF(`${filePath}`)
+});
+
+// Drawing events for mouse and touch
+canvas.addEventListener("mousedown", (e) => {
+    drawing = true;
+    [lastX, lastY] = getMouseOrTouchPosition(e);
+});
+
+canvas.addEventListener("mousemove", (e) => {
+    if (!drawing) return;
+    const [x, y] = getMouseOrTouchPosition(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    socket.emit("drawing", { groupName, lastX, lastY, x, y, color: "black" });
+    [lastX, lastY] = [x, y];
+});
+
+canvas.addEventListener("mouseup", () => (drawing = false));
+canvas.addEventListener("mouseout", () => (drawing = false));
+
+// Touch event listeners
+canvas.addEventListener("touchstart", (e) => {
+    drawing = true;
+    [lastX, lastY] = getMouseOrTouchPosition(e);
+    e.preventDefault(); // Prevent default touch actions
+});
+
+canvas.addEventListener("touchmove", (e) => {
+    if (!drawing) return;
+    const [x, y] = getMouseOrTouchPosition(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    socket.emit("drawing", { groupName, lastX, lastY, x, y, color: "black" });
+    [lastX, lastY] = [x, y];
+    e.preventDefault(); // Prevent default touch actions
+});
+
+canvas.addEventListener("touchend", () => (drawing = false));
+
+// Function to get position for mouse or touch
+function getMouseOrTouchPosition(event) {
+    let x, y;
+    if (event.touches) {
+        // For touch event
+        const touch = event.touches[0];
+        x = touch.clientX - canvas.getBoundingClientRect().left;
+        y = touch.clientY - canvas.getBoundingClientRect().top;
+    } else {
+        // For mouse event
+        x = event.offsetX;
+        y = event.offsetY;
+    }
+    return [x, y];
+}
+
+socket.on("drawing", ({ lastX, lastY, x, y, color }) => {
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+});
+
+// Voice chat setup
+document.getElementById("startVoice").addEventListener("click", async () => {
+  localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  for (const peerId in peers) {
+    localStream.getTracks().forEach((track) => peers[peerId].addTrack(track, localStream));
+  }
+});
+
+// WebRTC logic for voice communication
+socket.on("webrtc-offer", async ({ offer, peerId }) => {
+  const peerConnection = new RTCPeerConnection();
+  peers[peerId] = peerConnection;
+
+  localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+
+  peerConnection.ontrack = (event) => {
+    const remoteAudio = document.createElement("audio");
+    remoteAudio.srcObject = event.streams[0];
+    remoteAudio.play();
+  };
+
+  await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+  const answer = await peerConnection.createAnswer();
+  await peerConnection.setLocalDescription(answer);
+
+  socket.emit("webrtc-answer", { answer, peerId });
+});
+
+// Handling incoming WebRTC answer
+socket.on("webrtc-answer", async ({ answer, peerId }) => {
+  await peers[peerId].setRemoteDescription(new RTCSessionDescription(answer));
+});
+
+// Handle new peer connections
+socket.on("new-peer", (peerId) => {
+  const peerConnection = new RTCPeerConnection();
+  peers[peerId] = peerConnection;
+
+  localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+
+  peerConnection.ontrack = (event) => {
+    const remoteAudio = document.createElement("audio");
+    remoteAudio.srcObject = event.streams[0];
+    remoteAudio.play();
+  };
+
+  peerConnection.createOffer().then(async (offer) => {
+    await peerConnection.setLocalDescription(offer);
+    socket.emit("webrtc-offer", { offer, peerId });
+  });
+});
+
+  </script>
+
+</body>
+</html>
