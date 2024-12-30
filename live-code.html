@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <title>roitech education soution</title>
+        <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" href="codemirror.min.css">
+        <link rel="stylesheet" href="dracula.css">
+        <link rel="stylesheet" href="monokai.min.css">
+   <script src="javascript-hint.js"></script>
+   <script  src="codemirror.min.js"></script>
+   <script  src="javascript.js"></script>    
+   <script  src="python.js"></script> 
+   <script  src="matchtag.js"></script> 
+   <script  src="foldcode.js"></script> 
+   <style>
+    /* Basic reset and styling */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    header,nav {
+        background: #009688;
+        color: #fff;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 2px solid #004d40;
+    }
+
+    #brand-header {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    #profile-info {
+        display: flex;
+        align-items: center;
+    }
+
+    #profile-photo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+
+    #user-name {
+        font-size: 1.2em;
+    }
+
+    #nav-links {
+        display: flex;
+        gap: 15px;
+    }
+
+    #nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.2em;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+
+    #nav-links a i {
+        margin-right: 10px;
+    }
+
+    #nav-links a:hover {
+        color: #e0f2f1;
+    }
+
+    #settings-icon {
+        color: #fff;
+        font-size: 1.5em;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    #settings-icon:hover {
+        color: #e0f2f1;
+    }
+
+    #settings-menu {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: #fff;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        padding: 10px;
+    }
+
+    #settings-menu button {
+        background: #ff5722;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        cursor: pointer;
+        margin: 5px 0;
+        width: 100%;
+        text-align: left;
+        transition: background 0.3s ease;
+    }
+
+    #settings-menu button:hover {
+        background: #e64a19;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #profile-info {
+            margin-bottom: 10px;
+        }
+
+        #nav-links {
+            margin-top: 10px;
+            justify-content: flex-start;
+        }
+    }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<script src="pdf.min.js"></script>
+<script src="pdf.worker.min.js"></script>
+
+ <script src="pdf.min.mjs"></script> 
+
+    <nav>
+        <div id="brand-header">folksrooms</div>
+        <div id="profile-info">
+            <img id="profile-photo" src="avatar.webp" alt="Profile Photo">
+            <span id="user-name"></span>
+        </div>
+        <div id="nav-links">
+        
+            <a href="video-call.html"><i class="fas fa-video"></i> Video Call</a>
+            <a href="homepage.html"><i class="fas fa-home"></i> homepage</a>
+             <a href="pdfy.html"><i class="fas fa-code"></i>read pdf live</a>
+             <a href="chat.html"><i class="fas fa-home"></i>chat</a>
+        </div>
+        <a id="settings-icon" href="#"><i class="fas fa-cog"></i></a>
+        <div id="settings-menu">
+            <button id="logout-button">Logout</button>
+            <button id="delete-account-button">Delete Account</button>
+            <button id="change-theme-button">Change Theme</button>
+        </div>
+    </nav>
+    <body>
+
+        <textarea id="editor"></textarea>
+        <input type="text" id="groupName" placeholder="Enter group name" />
+        <button id="joinGroup">Join Group</button>
+        <button id="saveFile">Save</button>
+        <button id="downloadFile">Download</button>
+        
+        <button id="recordAudio">Record Audio</button>
+        <button id="stopRecording" disabled>Stop Recording</button>
+        <button id="playAudioList">Play Audio List</button>
+        
+        <div id="audioContainer"></div>
+        
+        <div id="userCursors">ddfd</div>
+        <script src="closebrackets.js"></script>
+        <script src="anyword-hint.js"></script>
+        <script src="show-hint.js"></script>
+        <script src="../socket.io/socket.io.js"></script>
+        <script>
+
+                    //alert() Function to decode JWT token
+        function parseJwt(token) {
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          return JSON.parse(atob(base64));
+        }
+        var userData
+
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem('authToken');
+
+        if (token) {
+          // Decode the token to get user data
+          userData = parseJwt(token);
+
+          // Display the user's username in the navbar
+          document.getElementById('user-name').innerText = `Hi, ${userData.email}`;
+        }
+
+            var user =userData.username;
+            var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("editor"), {
+              lineNumbers: true,
+              mode:"javascript",
+              theme:"monokai",
+            });
+     
+            
+      
+        document.getElementById("userCursors").innerHTML=user;
+            var socket = io();
+            var currentGroup = null;  
+           
+            document.getElementById('joinGroup').onclick = function() {
+                var groupName = document.getElementById('groupName').value;
+                if (groupName && groupName !== currentGroup) {
+                    if (currentGroup) { 
+                        socket.leave(currentGroup);
+                    }
+                    currentGroup = groupName;
+                    socket.emit('join class', { className: currentGroup, userName: user });
+                    document.getElementById('groupName').value = '';
+                }  
+            };
+        
+            socket.on('class joined', ({ className, userName }) => {
+                console.log(`${userName} joined class ${className}`);
+                console.log(className.length)
+                 document.getElementById("userCursors").innerText+="      "+userName;
+                socket.join(className);
+              
+            });
+        var a=""
+            socket.on('document-update', function(msg) {
+                if(msg.user !== user && msg.className === currentGroup) {
+                    myCodeMirror.setValue(msg.value);
+                   a= msg.user;
+                   
+                }
+            });
+     
+            myCodeMirror.on('keyup', function () {
+                if (currentGroup) {
+                    var msg = {
+                        user: user,
+                        className: currentGroup,
+                        value: myCodeMirror.getValue(),
+                        cursor: myCodeMirror.getCursor()
+                    };
+                  
+                    socket.emit('document-update', msg);
+                }
+            });
+        
+            myCodeMirror.on('cursorActivity', function() {
+                if (currentGroup) {
+                    var cursorPos = myCodeMirror.getCursor();
+                    socket.emit('cursor-update', {
+                        user: user,
+                        className:currentGroup,
+                        cursor: cursorPos
+                    });
+                }
+            });
+        
+            socket.on('cursor-update', function(data) {
+                var cursorId = `cursor-${data.cursor}`;
+                var cursorElement = document.getElementById(cursorId);
+                
+                // Create or update the cursor marker for the user
+                if (!cursorElement) {
+                    cursorElement = document.createElement('div');
+                    cursorElement.id = cursorId;
+                    cursorElement.className = 'user-cursor';
+                    cursorElement.innerText=data.user;
+                    document.getElementById('userCursors').appendChild(cursorElement);
+                }
+                
+                var coords = myCodeMirror.cursorCoords(data.cursor);
+                cursorElement.style.top = `${coords.top}px`;
+                cursorElement.style.left = `${coords.left}px`;
+            });
+        
+            document.getElementById('saveFile').onclick = function() {
+                const code = myCodeMirror.getValue();
+                localStorage.setItem('savedCode', code); // Saving to local storage
+                alert('Code saved locally!');
+            };
+        
+            document.getElementById('downloadFile').onclick = function() {
+                const code = myCodeMirror.getValue();
+                const blob = new Blob([code], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const filen=prompt("choose a file name with extension ie.pdf,doc,docx,.js,.java,text,ts,php,.cpp,.py,.kiss,. any file extension you wish")
+                if(filen==""){ filen="code.js"}
+                a.download = filen; // File name
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+        
+            socket.on("code change", code => {
+                console.log(code);
+                socket.emit("code change", code);
+            });
+            
+            
+            let mediaRecorder;
+            let audioChunks = [];
+        
+            document.getElementById('recordAudio').onclick = async function() {
+                // Request access to the microphone
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+        
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data); // Store audio chunks
+                };
+        
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        // Send audio data to server
+                        socket.emit('audio-data', reader.result.split(',')[1]); // Send base64 data
+                        audioChunks = []; // Reset chunks
+                    };
+                    reader.readAsDataURL(audioBlob);
+                };
+        
+                mediaRecorder.start();
+                document.getElementById('recordAudio').disabled = true;
+                document.getElementById('stopRecording').disabled = false;
+            };
+        
+            document.getElementById('stopRecording').onclick = function() {
+                mediaRecorder.stop();
+                document.getElementById('recordAudio').disabled = false;
+                document.getElementById('stopRecording').disabled = true;
+            };
+        
+            document.getElementById('playAudioList').onclick = function() {
+                socket.emit('request-audio-list');
+            };
+        
+            socket.on('audio-list', (audioFiles) => {
+                const audioContainer = document.getElementById('audioContainer');
+                audioContainer.innerHTML = ''; // Clear previous audio elements
+        let cc=audioFiles.length-1;
+        let au=[];
+        au.push(audioFiles[cc]);
+                au.forEach(file => {
+                  
+                    const audioElement = document.createElement('audio');
+                    audioElement.src=`${file}`;
+                    alert(audioElement.src)
+                    audioElement.controls = true; // Show controls
+                    audioElement.play(); // Auto-play after loading
+                    audioContainer.appendChild(audioElement);
+                });
+            });
+        
+        
+            
+        </script>
+            <script src="/codemirror.min.js"></script>
+            <script src="ja vascript-hint.js"></script>
+        </body>
+</html>
