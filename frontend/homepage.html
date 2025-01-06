@@ -178,8 +178,9 @@
 }
 
 body {
+
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    background-color:rgb(90, 88, 88);
     overflow-x: hidden;
 }
 
@@ -386,20 +387,156 @@ h1 {
 
 
     </style>
-</head>
-<body>
-    <header>
+    <style>
+        /* Basic reset and styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        header,nav {
+            background: #009688;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #004d40;
+        }
+
+        #brand-header {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        #profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        #profile-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        #user-name {
+            font-size: 1.2em;
+        }
+
+        #nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        #nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        #nav-links a i {
+            margin-right: 10px;
+        }
+
+        #nav-links a:hover {
+            color: #e0f2f1;
+        }
+
+        #settings-icon {
+            color: #fff;
+            font-size: 1.5em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        #settings-icon:hover {
+            color: #e0f2f1;
+        }
+
+        #settings-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            padding: 10px;
+        }
+
+        #settings-menu button {
+            background: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+            text-align: left;
+            transition: background 0.3s ease;
+        }
+
+        #settings-menu button:hover {
+            background: #e64a19;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #profile-info {
+                margin-bottom: 10px;
+            }
+
+            #nav-links {
+                margin-top: 10px;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script src="pdf.min.js"></script>
+<script src="pdf.worker.min.js"></script>
+    
+     <script src="pdf.min.mjs"></script> 
+
         <nav>
             <div id="brand-header">folksrooms</div>
             <div id="profile-info">
-                <img id="profile-photo" src="" alt="Profile Photo">
+                <img id="profile-photo" src="avatar.webp" alt="Profile Photo">
                 <span id="user-name"></span>
             </div>
             <div id="nav-links">
-                <!-- Direct navigation via href -->
+            
                 <a href="video-call.html"><i class="fas fa-video"></i> Video Call</a>
                 <a href="live-code.html"><i class="fas fa-code"></i> Live</a>
-                   <a href="pdfy.html"><i class="fas fa-code"></i>read pdf</a>
+                 <a href="pdfy.html"><i class="fas fa-code"></i>read pdf live</a>
+                 <a href="chat.html"><i class="fas fa-home"></i>chat</a>
             </div>
             <a id="settings-icon" href="#"><i class="fas fa-cog"></i></a>
             <div id="settings-menu">
@@ -408,124 +545,162 @@ h1 {
                 <button id="change-theme-button">Change Theme</button>
             </div>
         </nav>
-    </header>
-    <main id="main-content">
-   <div class="carousel-container">
-    <!-- Slide 1 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Welcome to Folksrooms!</h1>
-            <p>Where collaboration meets real-time innovation.</p>
-            <p>Join us in a world where ideas flow seamlessly, and collaboration knows no boundaries.</p>
+    
+    <div class="carousel-container">
+        <!-- Slide 1 -->
+        <div class="carousel-slide">
+            <div class="slide-content">
+                <h1>Welcome to Folksrooms!</h1>
+                <p>Where collaboration meets real-time innovation. work with peers inline  . invite them have  your  work stored  by yourelf </p>
+                <p>Join us in a world where ideas flow seamlessly, and collaboration knows no boundaries.</p>
+                <p>folksrooms  is  more  than  real  time  environmment  as we  belong  to  folksrooms no stranger  in </p>
+                <p>if  you hide  the  key !foksrooms will never  welcome  a stranger </p>
+            </div>
         </div>
-    </div>
-
-    <!-- Slide 2 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Real-Time Class Sessions</h1>
-            <p>Engage in live voice and PDF slide sharing.</p>
-            <p>Collaborate with your peers in real-time, enhancing the learning experience.</p>
+    
+        <!-- Slide 2 -->
+        <div class="carousel-slide">
+            <div class="slide-content">
+                <h1>Real-Time Class Sessions,pdf sharig, voice  communication,</h1>
+                <p>Engage in live voice and PDF slide sharing.</p>
+                <p>Collaborate with your peers in real-time, enhancing the learning experience.</p>
+                <p>what folksrooms  brings  in here  is  you have  ability to teach  any concept, in  provided  that  you have  pdf  slides  or  notes  uploaded in 
+                
+                </p>
+                <p>its  nice  experince  been in  folksrooms  as no  discussion  will require you to move  physically </p>
+                <p>what be  the  power of  e-lerning platform  if  no  real time  pdf shaing  , real time  class ,  and  hiden keys  </p>
+                <p>is  it  about  programming  , or  editing  word  docx  ,text , is  it abut  teaching  / learing  cpp,jav ,js  ,kiss coding 
+                    do not  wory still you are at the right place .</p>
+            </div>
         </div>
-    </div>
-
-    <!-- Slide 3 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Video Calls for Seamless Interaction</h1>
-            <p>Stay connected through high-quality video calling.</p>
-            <p>Experience face-to-face collaboration, even if you're miles apart.</p>
-        </div>
-    </div>
-
-    <!-- Slide 4 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Real-Time Code Editing</h1>
-            <p>Collaborate and code together, instantly.</p>
-            <p>Write, debug, and build code in real time with your teammates.</p>
-        </div>
-    </div>
-
-    <!-- Slide 5 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Collaborate on Documents in Real-Time</h1>
-            <p>Work on documents together, no matter where you are.</p>
-            <p>See live edits, suggestions, and improvements instantly, creating better work faster.</p>
-        </div>
-    </div>
-
-    <!-- Slide 6 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Voice Sessions for Instant Feedback</h1>
-            <p>Give and receive feedback, quickly and effectively.</p>
-            <p>Enhance your workflow with fast, clear communication during your sessions.</p>
-        </div>
-    </div>
-
-    <!-- Slide 7 -->
-    <div class="carousel-slide">
-        <div class="slide-content">
-            <h1>Join the Community!</h1>
-            <p>Ready to collaborate? Sign up today and start your journey with Folksrooms!</p>
-            <button class="cta-btn">Get Started</button>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <div class="carousel-nav">
-        <span class="prev">&#10094;</span>
-        <span class="next">&#10095;</span>
+    
+   <!-- Slide 3 -->
+   <div class="carousel-slide">
+    <div class="slide-content">
+        <h1>Video Calls for Seamless Interaction</h1>
+        <p>Stay connected through high-quality video calling.</p>
+        <p>Experience face-to-face collaboration, even if you're miles apart.</p>
+        <p>theres no doubt that you all wanted  this  feature, imargin having  link connection  to your  peers  in  </p>
+        <p>real  time . foksrooms  has  come with this in mind  ,you dont have  to have  100mb only 4mb to go and  see</p>
+        <p>your  peer in real time  , folksrooms  is  for  folks  so we  do never store your  data  in clouds  your data belongs  to you
+            . what else  than sercurity in tech wold ? 
+        </p>
+    
     </div>
 </div>
 
+<!-- Slide 4 -->
+<div class="carousel-slide">
+    <div class="slide-content">
+        <h1>Real-Time Code Editing</h1>
+        <p>Collaborate and code together, instantly.</p>
+        <p>Write, debug, and build code in real time with your teammates.</p>
+    </div>
+</div>
 
+<!-- Slide 5 -->
+<div class="carousel-slide">
+    <div class="slide-content">
+        <h1>Collaborate on Documents in Real-Time</h1>
+        <p>Work on documents together, no matter where you are.</p>
+        <p>See live edits, suggestions, and improvements instantly, creating better work faster.</p>
+    </div>
+</div>
 
-        
-        <!-- Main content will be dynamically loaded here -->
-    </main>
+<!-- Slide 6 -->
+<div class="carousel-slide">
+    <div class="slide-content">
+        <h1>Voice Sessions for Instant Feedback</h1>
+        <p>Give and receive feedback, quickly and effectively.</p>
+        <p>Enhance your workflow with fast, clear communication during your sessions.</p>
+    </div>
+</div>
+
+<!-- Slide 7 -->
+<div class="carousel-slide">
+    <div class="slide-content">
+        <h1>Join the Community!,invite people in  your  room have smooth conversation with peers </h1>
+        <p>Ready to collaborate?start today , start your journey with Folksrooms!</p>
+        <p>folskrooms  is  here to help you</p>
+    </div>
+</div>
+
+        <!-- Navigation -->
+        <div class="carousel-nav">
+            <span class="prev">&#10094;</span>
+            <span class="next">&#10095;</span>
+        </div>
+    </div>
+    
 
     <script>
-
-    let currentIndex = 0;
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(atob(base64));
+          }
+          var userData
+  
+          // Retrieve the token from localStorage
+          const token = localStorage.getItem('authToken');
+  
+          if (token) {
+            
+            // Decode the token to get user data
+            userData = parseJwt(token);
+            console.log(userData)
+            document.getElementById('profile-photo').src = userData.photo;
+            // Display the user's username in the navbar
+            document.getElementById('user-name').innerText = `Hi, ${userData.email}`;
+          }
+// Initialize carousel variables
+let currentIndex = 0;
 const slides = document.querySelectorAll('.carousel-slide');
 const totalSlides = slides.length;
-
 const prevBtn = document.querySelector('.prev');
 const nextBtn = document.querySelector('.next');
 
+// Function to update the carousel
+function updateCarousel() {
+  slides.forEach((slide, index) => {
+    slide.style.display=currentIndex===index?'block':'none'
+    slide.style.transform = `translateX(${(index - currentIndex) * 100}%)`;
+  });
+}
+
 // Function to go to the next slide
 function goToNextSlide() {
-    currentIndex = (currentIndex + 1) % totalSlides;
-    updateCarousel();
+  currentIndex = (currentIndex + 1) % totalSlides; // Loop back to the first slide
+  updateCarousel();
 }
 
 // Function to go to the previous slide
 function goToPrevSlide() {
-    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-    updateCarousel();
+  currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; // Loop to the last slide
+  updateCarousel();
 }
 
-// Update the carousel by changing the transform property
-function updateCarousel() {
-    const newTransform = -100 * currentIndex + '%';
-    slides.forEach(slide => {
-        slide.style.transform = `translateX(${newTransform})`;
-        // Reset the animation for new slide
-        slide.style.animation = 'none';
-        slide.offsetHeight; // Trigger reflow
-        slide.style.animation = 'fadeIn 1s forwards';
-    });
+// Event listeners for the buttons
+nextBtn.addEventListener('click', () => {
+  goToNextSlide();
+  resetAutoSlide();
+});
+prevBtn.addEventListener('click', () => {
+  goToPrevSlide();
+  resetAutoSlide();
+});
+
+// Automatically change slides every 5000ms
+let autoSlide = setInterval(goToNextSlide, 30000);
+
+// Reset auto-slide when the user interacts
+function resetAutoSlide() {
+  clearInterval(autoSlide);
+  autoSlide = setInterval(goToNextSlide, 300000);
 }
 
-// Event listeners for the next and previous buttons
-nextBtn.addEventListener('click', goToNextSlide);
-prevBtn.addEventListener('click', goToPrevSlide);
-
-// Auto slide every 5 seconds
-setInterval(goToNextSlide, 20000);
+// Initialize the carousel
+updateCarousel();
 
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -543,7 +718,6 @@ setInterval(goToNextSlide, 20000);
             .then(response => response.json())
             .then(user => {
                 document.getElementById('profile-photo').src = user.photo;
-                document.getElementById('user-name').textContent = user.username;
             })
             .catch(err => console.error('Error:', err));
 

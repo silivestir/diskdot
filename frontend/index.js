@@ -1,53 +1,45 @@
-
 const userList = document.getElementById("users");
 const chatWith = document.getElementById("chatWith");
 const messagesContainer = document.getElementById("messages");
 const messageInput = document.getElementById("messageInput");
 const sendMessageButton = document.getElementById("sendMessageButton");
-let socket = io();
-
 // Function to decode JWT token
- function parseJwt(token) {
+function parseJwt(token) {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(atob(base64));
-  }
+}
 
-  // Retrieve the token from localStorage
-  const token = localStorage.getItem('authToken');
 
+
+
+
+const token = localStorage.getItem('authToken');
+/*
+if (!token) {
+    window.location.href = '/index.html'; // Redirect to login if no token
+    return;
+}
+
+// Fetch user data
+fetch('/user-profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(response => response.json())
+    .then(user => {
+        document.getElementById('profile-photo').src = user.photo || "avatar.webp";
+    })
+    .catch(err => console.error('Error:', err));*/
+
+
+
+
+
+// Retrieve the token from localStorage
+//const token = localStorage.getItem('authToken');
+
+let socket = io();
 let currentChatUser = null;
-
-
-socket.on("connect", () => {
-    console.log("Connected to the server with socket ID:", socket.id);
-});
-
-socket.on("disconnect", () => {
-    console.log("Disconnected from the server.");
-});
-
-socket.on("users", (users) => {
-    updateUsers(users);
-});
-
-socket.on("privateChatHistory", ({ recipient, messages }) => {
-    openPrivateChatWindow(recipient, messages);
-});
-
-socket.on("privateMessage", (message) => {
-    displayMessage(message, message.sender === currentChatUser);
-});
-
-// Send message event
-sendMessageButton.addEventListener("click", () => {
-    const message = messageInput.value;
-    if (message.trim() && currentChatUser) {
-        socket.emit("privateMessage", { recipient: currentChatUser, message });
-
-        messageInput.value = "";
-    }
-});
 initializeSocketConnection()
 
 // Predefined list of emojis to assign to users
@@ -69,19 +61,47 @@ function formatTimestamp(timestamp) {
 
     const diffInSeconds = Math.floor((now - new Date(timestamp).getTime()) / 1000);
 
-    if (diffInSeconds < 10) return "just now";
-    if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    return new Date(timestamp).toLocaleDateString();
+    if (diffInSeconds < 10) { return "just now"; } else if (diffInSeconds < 60) { return `${diffInSeconds} seconds ago`; } else if (diffInSeconds < 3600) { return `${Math.floor(diffInSeconds / 60)} minutes ago`; } else if (diffInSeconds < 86400) {
+        return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+        return new Date(timestamp).toLocaleDateString();
+    }
 }
-
 
 
 
 // Initialize socket connection with authentication
 function initializeSocketConnection() {
-  
+
+
+    socket.on("connect", () => {
+        console.log("Connected to the server with socket ID:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Disconnected from the server.");
+    });
+
+    socket.on("users", (users) => {
+        updateUsers(users);
+    });
+
+    socket.on("privateChatHistory", ({ recipient, messages }) => {
+        openPrivateChatWindow(recipient, messages);
+    });
+
+    socket.on("privateMessage", (message) => {
+        displayMessage(message, message.sender === currentChatUser);
+    });
+
+    // Send message event
+    sendMessageButton.addEventListener("click", () => {
+        const message = messageInput.value;
+        if (message.trim() && currentChatUser) {
+            socket.emit("privateMessage", { recipient: currentChatUser, message });
+
+            messageInput.value = "";
+        }
+    });
 }
 
 // Update users list on the client-side
@@ -117,36 +137,58 @@ function displayMessage(message, isIncoming) {
 
     // Determine if the message is incoming or outgoing and style accordingly
     if (isIncoming) {
-message.timestamp= Date.now();
+        message.timestamp = Date.now();
 
-  
+
         messageDiv.classList.add("incoming");
         messageDiv.style.backgroundColor = "#d1e7dd"; // Receiver's message bubble color
         messageDiv.innerHTML = `
-            <div class="emoji">${userEmoji}</div>
-            <div class="message-content">
-                <span class="sender-name">${message.sender}</span>
-                <p>${message.message}</p>
-                <span class="timestamp">${formatTimestamp(message.timestamp)}</span>
-            </div>
+
+<div class="message receiver">
+${message.sender}
+<div class="person-icon"><img class="person-icon" src="avatar.webp" alt="user  profile" ></div>
+<div class="speech-bubble">${message.message}</div>
+     <span class="timestamp">${formatTimestamp(message.timestamp)}</span>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         
         `;
     } else {
 
-message.timestamp= Date.now();
+        message.timestamp = Date.now();
 
         formatTimestamp(message.timestamp)
         messageDiv.classList.add("private-message");
         messageDiv.innerHTML = `
-            <div class="emoji">${userEmoji}</div>
-            <div class="message-content">
-                <span class="sender-name">Me</span>
-                <p>${message.message}</p>
-                <span class="timestamp">${formatTimestamp(message.timestamp)}</span>
-            </div>
+<div class="message sender">
+<div class="person-icon"><img src="avatar.webp" alt="user  profile" ></div>
+<div class="speech-bubble">${message.message}</div>
+    <span class="timestamp">${formatTimestamp(message.timestamp)}</span>
+</div>
+
+
+
+
+
+
+
+
         `;
     }
 
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight; // Auto-scroll to the bottom
 }
-     
